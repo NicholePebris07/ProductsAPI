@@ -1,0 +1,6 @@
+@ProducsAPI_HostAddress = http://localhost:5022
+
+GET {{ProducsAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

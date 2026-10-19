@@ -90,11 +90,17 @@ namespace ProductsAPI.Controllers
         }
 
         // PUT: api/products/1
+
         [HttpPut("{id}")]
-        public ActionResult<Product> Update(
-        int id, UpdateProductRequest request)
+        public IActionResult Update(int id, UpdateProductRequest request)
         {
-            Product product = Products.First(p => p.Id == id);
+            var product = Products.FirstOrDefault(p => p.Id == id);
+
+            if (product == null)
+            {
+                throw new NotFoundException(
+                    $"Product with ID {id} was not found.");
+            }
 
             product.Name = request.Name;
             product.Price = request.Price;
@@ -103,15 +109,24 @@ namespace ProductsAPI.Controllers
             return Ok(product);
         }
 
+
         // DELETE: api/products/1
+
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            Product product = Products.First(p => p.Id == id);
+            var product = Products.FirstOrDefault(p => p.Id == id);
+
+            if (product == null)
+            {
+                throw new NotFoundException(
+                    $"Product with ID {id} was not found.");
+            }
 
             Products.Remove(product);
 
-            return Ok();
+            return NoContent();
         }
+
     }
 }

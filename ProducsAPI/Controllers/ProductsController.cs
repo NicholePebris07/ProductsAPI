@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProductsApi.Models;
 using ProductsApi.Models;
 using ProductsAPI.Models;
+using ProductsAPI.Exceptions;
 
 namespace ProductsAPI.Controllers
 {
@@ -56,10 +57,17 @@ namespace ProductsAPI.Controllers
         }
 
         // GET: api/products/1
+
         [HttpGet("{id}")]
-        public ActionResult<Product> GetById(int id)
+        public IActionResult GetById(int id)
         {
-            Product product = Products.First(p => p.Id == id);
+            var product = Products.FirstOrDefault(p => p.Id == id);
+
+            if (product == null)
+            {
+                throw new NotFoundException(
+                    $"Product with ID {id} was not found.");
+            }
 
             return Ok(product);
         }
@@ -82,11 +90,17 @@ namespace ProductsAPI.Controllers
         }
 
         // PUT: api/products/1
+
         [HttpPut("{id}")]
-        public ActionResult<Product> Update(
-        int id, UpdateProductRequest request)
+        public IActionResult Update(int id, UpdateProductRequest request)
         {
-            Product product = Products.First(p => p.Id == id);
+            var product = Products.FirstOrDefault(p => p.Id == id);
+
+            if (product == null)
+            {
+                throw new NotFoundException(
+                    $"Product with ID {id} was not found.");
+            }
 
             product.Name = request.Name;
             product.Price = request.Price;
@@ -95,15 +109,24 @@ namespace ProductsAPI.Controllers
             return Ok(product);
         }
 
+
         // DELETE: api/products/1
+
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            Product product = Products.First(p => p.Id == id);
+            var product = Products.FirstOrDefault(p => p.Id == id);
+
+            if (product == null)
+            {
+                throw new NotFoundException(
+                    $"Product with ID {id} was not found.");
+            }
 
             Products.Remove(product);
 
-            return Ok();
+            return NoContent();
         }
+
     }
 }

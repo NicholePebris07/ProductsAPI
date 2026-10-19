@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProductsApi.Models;
 using ProductsApi.Models;
 using ProductsAPI.Models;
+using ProductsAPI.Exceptions;
 
 namespace ProductsAPI.Controllers
 {
@@ -56,10 +57,17 @@ namespace ProductsAPI.Controllers
         }
 
         // GET: api/products/1
+
         [HttpGet("{id}")]
-        public ActionResult<Product> GetById(int id)
+        public IActionResult GetById(int id)
         {
-            Product product = Products.First(p => p.Id == id);
+            var product = Products.FirstOrDefault(p => p.Id == id);
+
+            if (product == null)
+            {
+                throw new NotFoundException(
+                    $"Product with ID {id} was not found.");
+            }
 
             return Ok(product);
         }
